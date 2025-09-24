@@ -7,7 +7,7 @@ import { Issue, IssuesResponse, CreateIssueRequest, UpdateIssueRequest } from '.
   providedIn: 'root'
 })
 export class IssueService {
-  private apiUrl = 'http://localhost:5000';
+  private apiUrl = 'https://securigeek.onrender.com';
 
   constructor(private http: HttpClient) {}
 
