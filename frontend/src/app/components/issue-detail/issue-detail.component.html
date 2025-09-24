@@ -1,0 +1,61 @@
+<div style="margin-bottom: 20px;">
+  <button class="btn btn-secondary" (click)="goBack()">
+    ← Back to Issues
+  </button>
+</div>
+
+<div *ngIf="loading" style="text-align: center; padding: 40px;">
+  Loading...
+</div>
+
+<div *ngIf="error" style="text-align: center; padding: 40px; color: #dc3545;">
+  {{ error }}
+</div>
+
+<div *ngIf="issue && !loading" class="issue-detail">
+  <div class="issue-header">
+    <h2>{{ issue.title }}</h2>
+    <div class="issue-meta">
+      <span [class]="getStatusClass(issue.status)">
+        {{ issue.status | titlecase }}
+      </span>
+      <span [class]="getPriorityClass(issue.priority)" style="margin-left: 12px;">
+        {{ issue.priority | titlecase }} Priority
+      </span>
+    </div>
+  </div>
+
+  <div class="issue-content">
+    <div class="issue-section">
+      <h3>Description</h3>
+      <p>{{ issue.description || 'No description provided' }}</p>
+    </div>
+
+    <div class="issue-section">
+      <h3>Details</h3>
+      <div class="detail-grid">
+        <div class="detail-item">
+          <strong>ID:</strong>
+          <span>{{ issue.id }}</span>
+        </div>
+        <div class="detail-item">
+          <strong>Assignee:</strong>
+          <span>{{ issue.assignee || 'Unassigned' }}</span>
+        </div>
+        <div class="detail-item">
+          <strong>Created:</strong>
+          <span>{{ formatDate(issue.createdAt) }}</span>
+        </div>
+        <div class="detail-item">
+          <strong>Updated:</strong>
+          <span>{{ formatDate(issue.updatedAt) }}</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="issue-section">
+      <h3>Raw JSON</h3>
+      <pre class="json-display">{{ issue | json }}</pre>
+    </div>
+  </div>
+</div>

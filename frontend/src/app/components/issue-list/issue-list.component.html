@@ -1,0 +1,141 @@
+<div class="filters">
+  <div class="filters-row">
+    <div class="form-group">
+      <input 
+        type="text" 
+        class="form-control" 
+        placeholder="Search by title..." 
+        [(ngModel)]="search"
+        (keyup.enter)="onSearch()"
+      >
+    </div>
+    
+    <div class="form-group">
+      <select class="form-control" [(ngModel)]="statusFilter" (change)="onFilterChange()">
+        <option value="">All Status</option>
+        <option value="open">Open</option>
+        <option value="in-progress">In Progress</option>
+        <option value="closed">Closed</option>
+      </select>
+    </div>
+    
+    <div class="form-group">
+      <select class="form-control" [(ngModel)]="priorityFilter" (change)="onFilterChange()">
+        <option value="">All Priority</option>
+        <option value="low">Low</option>
+        <option value="medium">Medium</option>
+        <option value="high">High</option>
+      </select>
+    </div>
+    
+    <div class="form-group">
+      <input 
+        type="text" 
+        class="form-control" 
+        placeholder="Assignee..." 
+        [(ngModel)]="assigneeFilter"
+        (keyup.enter)="onFilterChange()"
+      >
+    </div>
+    
+    <div>
+      <button class="btn btn-primary" (click)="onCreateIssue()">
+        Create Issue
+      </button>
+    </div>
+  </div>
+</div>
+
+<div *ngIf="loading" style="text-align: center; padding: 40px;">
+  Loading...
+</div>
+
+<div *ngIf="!loading">
+  <table class="table">
+    <thead>
+      <tr>
+        <th (click)="onSort('id')">
+          ID {{ getSortIcon('id') }}
+        </th>
+        <th (click)="onSort('title')">
+          Title {{ getSortIcon('title') }}
+        </th>
+        <th (click)="onSort('status')">
+          Status {{ getSortIcon('status') }}
+        </th>
+        <th (click)="onSort('priority')">
+          Priority {{ getSortIcon('priority') }}
+        </th>
+        <th (click)="onSort('assignee')">
+          Assignee {{ getSortIcon('assignee') }}
+        </th>
+        <th (click)="onSort('updatedAt')">
+          Updated {{ getSortIcon('updatedAt') }}
+        </th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let issue of issues" (click)="onRowClick(issue, $event)">
+        <td>{{ issue.id.substring(0, 8) }}...</td>
+        <td>{{ issue.title }}</td>
+        <td>
+          <span [class]="getStatusClass(issue.status)">
+            {{ issue.status | titlecase }}
+          </span>
+        </td>
+        <td [class]="getPriorityClass(issue.priority)">
+          {{ issue.priority | titlecase }}
+        </td>
+        <td>{{ issue.assignee || 'Unassigned' }}</td>
+        <td>{{ formatDate(issue.updatedAt) }}</td>
+        <td>
+          <button 
+            class="btn btn-secondary edit-btn" 
+            (click)="onEditIssue(issue)"
+            style="font-size: 12px; padding: 4px 8px;"
+          >
+            Edit
+          </button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div *ngIf="issues.length === 0" style="text-align: center; padding: 40px; color: #666;">
+    No issues found
+  </div>
+
+  <div class="pagination" *ngIf="totalPages > 1">
+    <button 
+      [disabled]="page === 1" 
+      (click)="onPageChange(page - 1)"
+    >
+      Previous
+    </button>
+    
+    <button 
+      *ngFor="let p of [].constructor(totalPages); let i = index"
+      [class.active]="page === i + 1"
+      (click)="onPageChange(i + 1)"
+    >
+      {{ i + 1 }}
+    </button>
+    
+    <button 
+      [disabled]="page === totalPages" 
+      (click)="onPageChange(page + 1)"
+    >
+      Next
+    </button>
+  </div>
+</div>
+
+<!-- Create/Edit Issue Modal -->
+<app-issue-form
+  *ngIf="showCreateForm || editingIssue"
+  [issue]="editingIssue"
+  (issueCreated)="onIssueCreated($event)"
+  (issueUpdated)="onIssueUpdated($event)"
+  (cancelled)="onFormCancelled()"
+></app-issue-form>
