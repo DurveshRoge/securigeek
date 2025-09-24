@@ -1,7 +1,7 @@
 from flask import Flask, request, jsonify
 from datetime import datetime
 import uuid
-
+import os 
 app = Flask(__name__)
 
 # Simple CORS handling
@@ -150,6 +150,6 @@ def update_issue(issue_id):
     issue['updatedAt'] = datetime.utcnow().isoformat() + 'Z'
     
     return jsonify(issue)
-
 if __name__ == '__main__':
-    app.run(debug=True, port=5000)
+    port = int(os.environ.get('PORT', 5000))  # Use Render's port if available
+    app.run(host='0.0.0.0', port=port, debug=True)
